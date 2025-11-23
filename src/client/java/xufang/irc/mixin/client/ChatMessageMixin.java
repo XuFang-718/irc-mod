@@ -28,7 +28,7 @@ public class ChatMessageMixin {
         boolean shouldSendToIrc = false;
         String ircMessage = null;
         
-        if (ircModeEnabled) {
+        if (ircModeEnabled && !message.startsWith("/")) {
             shouldSendToIrc = true;
             ircMessage = message;
         } else if (message.startsWith("#")) {
