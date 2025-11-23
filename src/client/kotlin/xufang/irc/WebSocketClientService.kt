@@ -20,7 +20,7 @@ class WebSocketClientService(private val config: IrcConfig) {
             client = IrcWebSocketClient(uri)
             client?.setConnectionLostTimeout(config.connectionTimeoutMs / 1000)
             client?.connectBlocking()
-            logger.info("WebSocket 连接成功: ${config.serverUrl}")
+            logger.info("WebSocket 连接成功")
         } catch (e: Exception) {
             logger.warn("WebSocket 连接失败，将在 ${config.reconnectDelayMs}ms 后重试")
             scheduleReconnect()
@@ -64,6 +64,33 @@ class WebSocketClientService(private val config: IrcConfig) {
             logger.info("WebSocket 已连接")
             val request = mapOf("type" to "get_history")
             send(gson.toJson(request))
+            
+            Thread {
+                try {
+                    Thread.sleep(3000)
+                    showWelcomeMessage()
+                } catch (e: InterruptedException) {
+                    logger.debug("欢迎消息被中断")
+                }
+            }.start()
+        }
+        
+        private fun showWelcomeMessage() {
+            val minecraft = Minecraft.getInstance()
+            minecraft.execute {
+                try {
+                    if (minecraft.player != null) {
+                        minecraft.player?.displayClientMessage(Component.literal("§8§m                                                    "), false)
+                        minecraft.player?.displayClientMessage(Component.literal("§a§l✓ §bIRC 连接成功"), false)
+                        minecraft.player?.displayClientMessage(Component.literal(""), false)
+                        minecraft.player?.displayClientMessage(Component.literal("§7使用 §e[消息 §7或 §e#消息 §7发送单条IRC消息"), false)
+                        minecraft.player?.displayClientMessage(Component.literal("§7使用 §e[[chat on §7或 §e##chat on §7开启IRC模式"), false)
+                        minecraft.player?.displayClientMessage(Component.literal("§8§m                                                    "), false)
+                    }
+                } catch (e: Exception) {
+                    logger.error("显示欢迎消息失败", e)
+                }
+            }
         }
         
         override fun onMessage(message: String) {

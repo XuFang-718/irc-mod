@@ -19,7 +19,7 @@ public class ChatMessageMixin {
     private void onSendChat(String message, CallbackInfo ci) {
         if (message == null) return;
         
-        if (message.startsWith("##")) {
+        if (message.startsWith("[[") || message.startsWith("##")) {
             ci.cancel();
             handleIrcCommand(message.substring(2));
             return;
@@ -31,7 +31,7 @@ public class ChatMessageMixin {
         if (ircModeEnabled && !message.startsWith("/")) {
             shouldSendToIrc = true;
             ircMessage = message;
-        } else if (message.startsWith("#")) {
+        } else if (message.startsWith("[") || message.startsWith("#")) {
             shouldSendToIrc = true;
             ircMessage = message.substring(1);
         }
@@ -80,25 +80,25 @@ public class ChatMessageMixin {
         if (cmd.equals("chat on")) {
             ircModeEnabled = true;
             showMessage("§a[IRC] IRC模式已开启 - 所有消息将发送到IRC频道", false);
-            showMessage("§7[IRC] 使用 §e##chat off §7关闭IRC模式", false);
+            showMessage("§7[IRC] 使用 §e[[chat off §7或 §e##chat off §7关闭IRC模式", false);
         } else if (cmd.equals("chat off")) {
             ircModeEnabled = false;
             showMessage("§a[IRC] IRC模式已关闭 - 恢复正常聊天", false);
-            showMessage("§7[IRC] 使用 §e# §7前缀发送单条IRC消息", false);
+            showMessage("§7[IRC] 使用 §e[ §7或 §e# §7前缀发送单条IRC消息", false);
         } else if (cmd.equals("chat") || cmd.equals("chat status")) {
             if (ircModeEnabled) {
                 showMessage("§e[IRC] 当前状态: §aIRC模式已开启", false);
-                showMessage("§7[IRC] 使用 §e##chat off §7关闭IRC模式", false);
+                showMessage("§7[IRC] 使用 §e[[chat off §7或 §e##chat off §7关闭IRC模式", false);
             } else {
                 showMessage("§e[IRC] 当前状态: §7正常聊天模式", false);
-                showMessage("§7[IRC] 使用 §e##chat on §7开启IRC模式", false);
+                showMessage("§7[IRC] 使用 §e[[chat on §7或 §e##chat on §7开启IRC模式", false);
             }
         } else {
-            showMessage("§c[IRC] 未知命令: ##" + command, false);
+            showMessage("§c[IRC] 未知命令: " + command, false);
             showMessage("§7[IRC] 可用命令:", false);
-            showMessage("§7  - §e##chat on §7- 开启IRC模式", false);
-            showMessage("§7  - §e##chat off §7- 关闭IRC模式", false);
-            showMessage("§7  - §e##chat §7- 查看当前状态", false);
+            showMessage("§7  - §e[[chat on §7或 §e##chat on §7- 开启IRC模式", false);
+            showMessage("§7  - §e[[chat off §7或 §e##chat off §7- 关闭IRC模式", false);
+            showMessage("§7  - §e[[chat §7或 §e##chat §7- 查看当前状态", false);
         }
     }
     

@@ -15,7 +15,6 @@ object IrcClient : ClientModInitializer {
 			logger.info("初始化IRC客户端...")
 			
 			config = IrcConfig.load()
-			logger.info("WebSocket服务器: ${config.serverUrl}")
 			
 			wsClient = WebSocketClientService(config)
 			wsClient.connect()
