@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "xufang.irc.mixin.client",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"ChatMessageMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
